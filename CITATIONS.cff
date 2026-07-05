@@ -1,0 +1,33 @@
+cff-version: 1.2.0
+title: Terraform Module to manage Azure invoice sections.
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - orcid: "https://orcid.org/0009-0002-1956-1126"
+    given-names: Alexandre
+    family-names: PARÈS
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.20787703
+repository-code: >-
+  https://github.com/alexandre-pares/terraform-azure-finops-focus-billing-export
+repository-artifact: >-
+  https://registry.terraform.io/modules/alexandre-pares/finops-focus-billing-export/azure/latest
+abstract: >-
+  Terraform Module to manage Azure invoice sections. Create invoice sections to organize costs of multiples subscriptions directly in the invoice (per application, team, environment, etc.). Supports MCA and MCA-E billing accounts with direct billing.
+keywords:
+  - terraform
+  - terraform-modules
+  - azure
+  - azurerm
+  - azure-billing
+  - azure-mca
+  - azure-mca-e
+  - azure-mca-enterprise
+  - azure-invoice
+  - azure-invoice-sections
+  - finops
+  - finops-invoicing
+license: Apache-2.0
