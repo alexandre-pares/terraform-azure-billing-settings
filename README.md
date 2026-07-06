@@ -18,6 +18,8 @@ module "billing_profile_settings" {
   source  = "alexandre-pares/billing-settings/azure"
   version = "1.0.0"
 
+  scope_id = var.scope_id
+
   enable_cost_management  = true
   enable_reservation      = true
   enable_saving_plan      = true
