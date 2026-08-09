@@ -2,7 +2,7 @@ variable "scope_id" {
   description = <<DESCRIPTION
   Id of the billing scope.
 
-  Can be a billing account (EA only), billing profile, enrollment account, invoice section, CSP customer, etc.
+  Can be a billing account (EA only), billing profile (MCA/MPA) or a MPA customer
 
   Examples:
 
@@ -11,8 +11,6 @@ variable "scope_id" {
   - `/providers/Microsoft.Billing/billingAccounts/00000000-0000-5000-3000-000000000000:00000000-0000-4000-0000-000000000000_2018-09-30` - Microsoft Partner Agreement (MPA)
   - `/providers/Microsoft.Billing/billingAccounts/00000000-0000-5000-3000-000000000000:00000000-0000-4000-0000-000000000000_2019-05-31/billingProfiles/0000-0000-000-000` - MCA Billing profile
   - `/providers/Microsoft.Billing/billingAccounts/00000000-0000-5000-3000-000000000000:00000000-0000-4000-0000-000000000000_2018-09-30/billingProfiles/00000000-0000-4000-0000-000000000000` - MPA Billing profile
-  - `/providers/Microsoft.Billing/billingAccounts/00000000-0000-5000-3000-000000000000:00000000-0000-4000-0000-000000000000_2019-05-31/billingProfiles/0000-0000-000-000/invoiceSections/0000-0000-000-000` - MCA Invoice section
-  - `/providers/Microsoft.Billing/billingAccounts/00000000-0000-5000-3000-000000000000:00000000-0000-4000-0000-000000000000_2019-05-31/billingProfiles/0000-0000-000-000/invoiceSections/00000000-0000-4000-0000-000000000000` - MCA Invoice section
   - `/providers/Microsoft.Billing/billingAccounts/00000000-0000-5000-3000-000000000000:00000000-0000-4000-0000-000000000000_2018-09-30/customers/00000000-0000-4000-0000-000000000000` - CSP Customer (attached to a MPA)
 
   DESCRIPTION
@@ -119,36 +117,53 @@ variable "marketplace_scope" {
 #   default  = null
 # }
 
-# variable "enable_tag_inheritance" {
-#   description = <<DESCRIPTION
-#   Use tag inheritance to group resource costs and automatically apply billing, subscription and resource group tags to new usage data.
+variable "enable_invoice_section_tag_management" {
+  description = <<DESCRIPTION
+  Allow users with an owner or a contributor role on an invoice section to manage its tags.
 
-#   If enabled, you need to specify `var.tag_inheritance_scope`.
+  Learn more: https://learn.microsoft.com/sr-cyrl-rs/azure/cost-management-billing/costs/billing-tags#invoice-section-tags
 
-#   Examples:
-#   - `true`  - Enable tag inheritance
-#   - `false` - Disable tag inheritance
+  Examples:
+  - `true`  - Enable invoice section tag management
+  - `false` - Disable invoice section tag management
 
-#   DESCRIPTION
+  DESCRIPTION
 
-#   type     = bool
-#   nullable = true
-#   default  = null
-# }
+  type     = bool
+  nullable = true
+  default  = null
+}
 
-# variable "tag_inheritance_scope" {
-#   description = <<DESCRIPTION
-#   Describe the mecanism when a resource tag has the same key has an inherited tag.
+variable "enable_tag_inheritance" {
+  description = <<DESCRIPTION
+  Use tag inheritance to group resource costs and automatically apply billing, subscription and resource group tags to new usage data.
 
-#   If set, you must enable tag inheritance using `var.enable_marketplace`.
+  If enabled, you need to specify `var.tag_inheritance_scope`.
 
-#   Examples:
-#   - `keep_resource_tag` - Use resource tag instead of inherited tag
-#   - `use_inherited_tag` - Apply subscription or resource group tag
+  Examples:
+  - `true`  - Enable tag inheritance
+  - `false` - Disable tag inheritance
 
-#   DESCRIPTION
+  DESCRIPTION
 
-#   type     = string
-#   nullable = true
-#   default  = null
-# }
+  type     = bool
+  nullable = true
+  default  = null
+}
+
+variable "tag_inheritance_scope" {
+  description = <<DESCRIPTION
+  Describe the mecanism when a resource tag has the same key has an inherited tag.
+
+  If set, you must enable tag inheritance using `var.enable_marketplace`.
+
+  Examples:
+  - `keep_resource_tag` - Use resource tag instead of inherited tag
+  - `use_inherited_tag` - Apply subscription or resource group tag
+
+  DESCRIPTION
+
+  type     = string
+  nullable = true
+  default  = null
+}

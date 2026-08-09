@@ -1,4 +1,3 @@
-
 output "settings" {
   description = <<DESCRIPTION
   Map of updated billing settings.
@@ -7,7 +6,8 @@ output "settings" {
   - `reservationPurchases` - Allow users with access to an Azure subscription to buy Azure Reservations.
   - `savingsPlanPurchases` - Allow users with access to an Azure subscription to buy Azure Saving Plans.
   - `marketplacePurchases` - Allow users with access to an Azure subscription to buy Azure Marketplace products.
-  - `invoiceSectionLabelManagement` - Controls invoice section label management at invoice section scope.
+  - `invoiceSectionLabelManagement` - Allow users with an owner or a contributor role on an invoice section to manage its tags.
+  - `tagInheritance` - Controls tag inheritance.
 
   ---
 
@@ -20,21 +20,32 @@ output "settings" {
     "savingsPlanPurchases"          = "NotAllowed"
     "marketplacePurchases"          = "NotAllowed"
     "invoiceSectionLabelManagement" = "Allowed"
+    "tagInheritance"                = "preferContainerTags"
   }
   ```
 
   DESCRIPTION
 
-  value = azapi_update_resource.new_policies_settings.output.properties
+  value = merge(
+    azapi_update_resource.new_policies_settings.output.properties,
+    {
+      tagInheritance = var.enable_tag_inheritance != null && var.enable_tag_inheritance ? azapi_resource.tag_inheritance[0].output.properties.preferContainerTags ? "use_inherited_tag" : "keep_resource_tag" : try(data.azapi_resource.old_tag_inheritance.output.properties.preferContainerTags, "NotAllowed")
+    }
+  )
 }
 
-# output "tag_inheritance" {
-#   description = <<DESCRIPTION
+output "scope_type" {
+  description = <<DESCRIPTION
+  Type of the scope where the billing settings are applied.
 
-#   DESCRIPTION
+  These values are only extrapolated from the `scope_id` variable.
 
-#   value = {
-#     enabled = try(azapi_resource.tag_inheritance[0], null) != null
-#     scope   = try(azapi_resource.tag_inheritance[0].output.properties.preferContainerTags, null) != null ? azapi_resource.tag_inheritance[0].output.properties.preferContainerTags ? "keep_resource_tag" : "use_inherited_tag" : null
-#   }
-# }
+  Possible values are:
+  - `ea` - Enterprise Agreement (EA) billing account
+  - `billing_profile` - MCA and MPA billing profile
+  - `mpa_customer` - MPA customer
+
+  DESCRIPTION
+
+  value = local.scope_type
+}
