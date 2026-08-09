@@ -1,6 +1,6 @@
 # Billing Settings Terraform module for Microsoft Azure
 
-Terraform Module to manage billing settings over a billing profile (MCA).
+Terraform Module to manage billing settings over a billing profile (MCA & MPA), a EA billing account or a MPA Customer.
 
 ## Features
 
@@ -10,33 +10,37 @@ Using this module you can manage the following features:
 - [Reservation](https://learn.microsoft.com/en-us/azure/cost-management-billing/reservations/): Allow users with access to an Azure subscription to buy Azure Reservations.
 - [Saving Plan](https://learn.microsoft.com/en-us/azure/cost-management-billing/savings-plan/): Allow users with access to an Azure subscription to buy Azure Saving Plans.
 - [Marketplace](https://learn.microsoft.com/en-us/azure/cost-management-billing/manage/enable-marketplace-purchases): Allow users with access to an Azure subscription to buy Azure Marketplace products.
+- [Invoice Section Label Management](https://learn.microsoft.com/en-us/azure/cost-management-billing/costs/billing-tags#invoice-section-tags): Allow users with an owner or a contributor role on an invoice section to manage its tags. (MCA and MPA with direct billing only)
 - [Tag Inheritance](https://learn.microsoft.com/en-us/azure/cost-management-billing/costs/enable-tag-inheritance): Apply billing, resource group, and subscription tags to child resource usage records.
 
 ## Compatibility
 
-|      **Feature**     	| **EA billing account** 	| **MCA billing profile** 	| **MPA Customer** 	|
-|:--------------------:	|:----------------------:	|:-----------------------:	|:----------------:	|
-| Cost Management      	|            x           	|            x            	|         x        	|
-| Reservation          	|            x           	|            x            	|                  	|
-| Saving Plan          	|            x           	|            x            	|                  	|
-| Marketplace          	|            x           	|            x            	|                  	|
-| Tag Inheritance      	|            x           	|            x            	|                  	|
-| Invoice Section Tags 	|                        	|            x            	|                  	|
+|      **Feature**     	| **EA billing account** 	| **MCA & MPA billing profile** 	| **MPA Customer** 	|
+|:--------------------:	|:----------------------:	|:-----------------------------:	|:----------------:	|
+| Cost Management      	|            x           	|               x               	|         x        	|
+| Reservation          	|            x           	|               x               	|                  	|
+| Saving Plan          	|            x           	|               x               	|                  	|
+| Marketplace          	|            x           	|               x               	|                  	|
+| Tag Inheritance      	|            x           	|               x               	|                  	|
+| Invoice Section Tags 	|                        	|               x               	|                  	|
 
 ## Usage
 
 ```hcl
 module "billing_profile_settings" {
   source  = "alexandre-pares/billing-settings/azure"
-  version = "1.0.0"
+  version = "1.0.1"
 
   scope_id = var.scope_id
 
-  enable_cost_management  = true
-  enable_reservation      = true
-  enable_saving_plan      = true
-  enable_marketplace      = true
-  marketplace_scope       = "free"
+  enable_cost_management                = true
+  enable_reservation                    = true
+  enable_saving_plan                    = true
+  enable_marketplace                    = true
+  marketplace_scope                     = "free"
+  enable_invoice_section_tag_management = true
+  enable_tag_inheritance                = true
+  tag_inheritance_scope                 = "use_inherited_tag"
 }
 ```
 
