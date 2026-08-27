@@ -7,7 +7,7 @@
 ```hcl
 module "billing_profile_settings" {
   source  = "alexandre-pares/billing-settings/azure"
-  version = "1.0.0"
+  version = "1.0.1"
 
   scope_id = var.scope_id
 
@@ -23,7 +23,7 @@ module "billing_profile_settings" {
 
 | Name | Version |
 | ---- | ------- |
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | ~> 1.8 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | ~> 1.16 |
 | <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) | ~> 2 |
 
 ## Providers

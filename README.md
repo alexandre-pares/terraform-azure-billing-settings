@@ -60,26 +60,72 @@ To enable it back you can go to the Azure Portal > Cost Management > Select your
 
 Tag inheritance cannot be disabled if not managed before.
 
-Fix to disable tag inheritance:
+Fix to disable tag inheritance if previously enabled and unmanaged:
 
-1. Import the tag inheritance resource using the following command:
+1. Enable Tag inheritance by setting `var.enable_tag_inheritance` to `true`
+2. Run `terraform plan` and `terraform apply` commands
+
+This will trigger the import block in [`import.tf`](./imports.tf)
 
 ```bash
-# MCA & MPA billing profile
-billing_account_id="<replace-me"
-billing_profile_id="<replace-me>"
-terraform import module.billing_profile_settings.azapi_resource.tag_inheritance[0] /providers/Microsoft.Billing/billingAccounts/$billing_account_id/billingProfiles/$billing_profile_id/providers/Microsoft.CostManagement/Settings/taginheritance?api-version=2025-03-01
+$ terraform plan
+[...]
+Terraform used the selected providers to generate the following execution plan. Resource actions are indicated with the following symbols:
+  ~ update in-place
+
+Terraform will perform the following actions:
+
+  # module.billing_profile_settings.azapi_resource.tag_inheritance[0] will be updated in-place
+  # (will be imported first)
+  ~ resource "azapi_resource" "tag_inheritance" {
+      + body                      = {
+          + kind       = "taginheritance"
+          + properties = {
+              + preferContainerTags = false
+            }
+        }
+        id                        = "/providers/Microsoft.Billing/billingAccounts/00000000-0000-5000-3000-000000000000:00000000-0000-4000-0000-000000000000_2019-05-31/billingProfiles/0000-0000-000-000/providers/Microsoft.CostManagement/settings/taginheritance"
+        ignore_casing             = false
+        ignore_missing_property   = true
+        ignore_null_property      = false
+        name                      = "taginheritance"
+      ~ output                    = {} -> (known after apply)
+        parent_id                 = "/providers/Microsoft.Billing/billingAccounts/00000000-0000-5000-3000-000000000000:00000000-0000-4000-0000-000000000000_2019-05-31/billingProfiles/0000-0000-000-000"
+      + response_export_values    = [
+          + "properties.preferContainerTags",
+        ]
+        schema_validation_enabled = true
+        sensitive_body            = (write-only attribute)
+        type                      = "Microsoft.CostManagement/settings@2025-03-01"
+    }
+
+Plan: 1 to import, 0 to add, 1 to change, 0 to destroy.
+
+Changes to Outputs:
+  ~ settings   = {
+      ~ tagInheritance                = "false" -> (known after apply)
+        # (5 unchanged attributes hidden)
+    }
+
+
+$ terraform apply
+[...]
+module.billing_profile_settings.azapi_resource.tag_inheritance[0]: Importing... [identity=id=/providers/Microsoft.Billing/billingAccounts/00000000-0000-5000-3000-000000000000:00000000-0000-4000-0000-000000000000_2019-05-31/billingProfiles/0000-0000-000-000/providers/Microsoft.CostManagement/settings/taginheritance,type=Microsoft.CostManagement/settings@2025-03-01]
+module.billing_profile_settings.azapi_resource.tag_inheritance[0]: Import complete [identity=id=/providers/Microsoft.Billing/billingAccounts/00000000-0000-5000-3000-000000000000:00000000-0000-4000-0000-000000000000_2019-05-31/billingProfiles/0000-0000-000-000/providers/Microsoft.CostManagement/settings/taginheritance,type=Microsoft.CostManagement/settings@2025-03-01]
+module.billing_profile_settings.azapi_resource.tag_inheritance[0]: Modifying... [id=/providers/Microsoft.Billing/billingAccounts/00000000-0000-5000-3000-000000000000:00000000-0000-4000-0000-000000000000_2019-05-31/billingProfiles/0000-0000-000-000/providers/Microsoft.CostManagement/settings/taginheritance]
+module.billing_profile_settings.azapi_resource.tag_inheritance[0]: Modifications complete after 4s [id=/providers/Microsoft.Billing/billingAccounts/00000000-0000-5000-3000-000000000000:00000000-0000-4000-0000-000000000000_2019-05-31/billingProfiles/0000-0000-000-000/providers/Microsoft.CostManagement/settings/taginheritance]
+
+Apply complete! Resources: 1 imported, 0 added, 1 changed, 0 destroyed.
 ```
 
-2. Enable Tag inheritance using `var.enable_tag_inheritance` to `true` and set the approprivate value for `var.tag_inheritance_scope`
-3. Disable Tag inheritance using `var.enable_tag_inheritance` to `false` and removing `var.tag_inheritance_scope`
+3. Disable Tag inheritance by setting `var.enable_tag_inheritance` to `false`
 
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
 
 | Name | Version |
 | ---- | ------- |
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | ~> 1.8 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | ~> 1.16 |
 | <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) | ~> 2.10 |
 
 ## Providers

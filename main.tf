@@ -42,7 +42,7 @@ data "azapi_resource" "old_tag_inheritance" {
 resource "azapi_resource" "tag_inheritance" {
   count = var.enable_tag_inheritance != null && var.enable_tag_inheritance ? 1 : 0
 
-  type = "Microsoft.CostManagement/Settings@2025-03-01"
+  type = "Microsoft.CostManagement/settings@2025-03-01"
   name = "taginheritance"
 
   parent_id = var.scope_id
