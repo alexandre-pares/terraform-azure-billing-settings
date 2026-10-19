@@ -33,7 +33,7 @@ locals {
 
   properties_by_scope_type = {
     # EA billing account supports:
-    # - enable_cost_management using enrollment policies (accountOwnerViewCharges and departmentAdminViewCHarges)
+    # - enable_cost_management using enrollment policies (accountOwnerViewCharges and departmentAdminViewCharges)
     # - enable_marketplace using marketplacePurchases
     # - enable_reservation using reservationPurchases
     # - enable_saving_plan using savingsPlanPurchases
@@ -41,9 +41,10 @@ locals {
     # Learn more: https://learn.microsoft.com/en-us/azure/templates/microsoft.billing/billingaccounts/policies
     ea = merge(
       var.enable_cost_management != null ? {
-        enrollmentPolicies = {
+        enterpriseAgreementPolicies = {
           accountOwnerViewCharges    = var.enable_cost_management ? "Allowed" : "NotAllowed"
-          departmentAdminViewCHarges = var.enable_cost_management ? "Allowed" : "NotAllowed"
+          departmentAdminViewCharges = var.enable_cost_management ? "Allowed" : "NotAllowed"
+          authenticationType         = data.azapi_resource.old_policies_settings.output.properties.enterpriseAgreementPolicies.authenticationType
         }
       } : {},
       local.common_properties.ea_and_billing_profile
