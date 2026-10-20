@@ -26,6 +26,9 @@ Using this module you can manage the following features:
 
 ## Usage
 
+
+### MCA & MPA billing profile
+
 ```hcl
 module "billing_profile_settings" {
   source  = "alexandre-pares/billing-settings/azure"
@@ -41,6 +44,25 @@ module "billing_profile_settings" {
   enable_invoice_section_tag_management = true
   enable_tag_inheritance                = true
   tag_inheritance_scope                 = "use_inherited_tag"
+}
+```
+
+### EA billing acount
+
+```hcl
+module "billing_account_settings" {
+  source  = "alexandre-pares/billing-settings/azure"
+  version = "1.0.1"
+
+  scope_id = var.scope_id
+
+  enable_cost_management  = true
+  enable_reservation      = true
+  enable_saving_plan      = true
+  enable_marketplace      = true
+  marketplace_scope       = "free"
+  enable_tag_inheritance  = true
+  tag_inheritance_scope   = "use_inherited_tag"
 }
 ```
 
@@ -151,14 +173,15 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 | ---- | ----------- | ---- | ------- | :------: |
-| <a name="input_enable_cost_management"></a> [enable\_cost\_management](#input\_enable\_cost\_management) | Allow Azure subscriptions users to view and optimize costs.<br/><br/>  Examples:<br/>  - `true`  - Enable cost management<br/>  - `false` - Disable cost management (why do that?) | `bool` | `null` | no |
-| <a name="input_enable_invoice_section_tag_management"></a> [enable\_invoice\_section\_tag\_management](#input\_enable\_invoice\_section\_tag\_management) | Allow users with an owner or a contributor role on an invoice section to manage its tags.<br/><br/>  Learn more: https://learn.microsoft.com/sr-cyrl-rs/azure/cost-management-billing/costs/billing-tags#invoice-section-tags<br/><br/>  Examples:<br/>  - `true`  - Enable invoice section tag management<br/>  - `false` - Disable invoice section tag management | `bool` | `null` | no |
-| <a name="input_enable_marketplace"></a> [enable\_marketplace](#input\_enable\_marketplace) | Allow users with access to an Azure subscription to buy Azure Marketplace products.<br/><br/>  If enabled, you need to specify `var.marketplace_scope`.<br/><br/>  Examples:<br/>  - `true`  - Enable Marketplace products purchases<br/>  - `false` - Disable Marketplace products purchases | `bool` | `null` | no |
+| <a name="input_enable_cost_management"></a> [enable\_cost\_management](#input\_enable\_cost\_management) | Allow Azure subscriptions users to view and optimize costs.<br/><br/>  For EA biling account, this will enable/disable `accountOwnerViewCharges` and `departmentAdminViewCharges` settings.<br/><br/>  Examples:<br/>  - `true`  - Enable cost management<br/>  - `false` - Disable cost management (why do that?) | `bool` | `null` | no |
+| <a name="input_enable_invoice_section_tag_management"></a> [enable\_invoice\_section\_tag\_management](#input\_enable\_invoice\_section\_tag\_management) | Allow users with an owner or a contributor role on an invoice section to manage its tags.<br/><br/>  This feature is only available on MCA/MPA billing profiles.<br/><br/>  Learn more: https://learn.microsoft.com/sr-cyrl-rs/azure/cost-management-billing/costs/billing-tags#invoice-section-tags<br/><br/>  Examples:<br/>  - `true`  - Enable invoice section tag management<br/>  - `false` - Disable invoice section tag management | `bool` | `null` | no |
+| <a name="input_enable_marketplace"></a> [enable\_marketplace](#input\_enable\_marketplace) | Allow users with access to an Azure subscription to buy Azure Marketplace products.<br/><br/>  If enabled, you need to specify `var.marketplace_scope`.<br/><br/>  If you are using the Private Azure Marketplace, then you can disable the marketplace.<br/><br/>  Examples:<br/>  - `true`  - Enable Marketplace products purchases<br/>  - `false` - Disable Marketplace products purchases | `bool` | `null` | no |
 | <a name="input_enable_reservation"></a> [enable\_reservation](#input\_enable\_reservation) | Allow users with access to an Azure subscription to buy Azure Reservations.<br/><br/>  Examples:<br/>  - `true`  - Enable reservations purchases<br/>  - `false` - Disable reservations purchases | `bool` | `null` | no |
 | <a name="input_enable_saving_plan"></a> [enable\_saving\_plan](#input\_enable\_saving\_plan) | Allow users with access to an Azure subscription to buy Azure Saving Plans.<br/><br/>  Examples:<br/>  - `true`  - Enable Saving Plans purchases<br/>  - `false` - Disable Saving Plans purchases | `bool` | `null` | no |
 | <a name="input_enable_tag_inheritance"></a> [enable\_tag\_inheritance](#input\_enable\_tag\_inheritance) | Use tag inheritance to group resource costs and automatically apply billing, subscription and resource group tags to new usage data.<br/><br/>  If enabled, you need to specify `var.tag_inheritance_scope`.<br/><br/>  Examples:<br/>  - `true`  - Enable tag inheritance<br/>  - `false` - Disable tag inheritance | `bool` | `null` | no |
 | <a name="input_marketplace_scope"></a> [marketplace\_scope](#input\_marketplace\_scope) | Scope of products that users can access to.<br/><br/>  If set, you must enable marketplace purchases using `var.enable_marketplace`.<br/><br/>  Examples:<br/>  - `free`          - Allow purchases of only Free products<br/>  - `free_and_paid` - Allow purchases of free and paid products | `string` | `null` | no |
-| <a name="input_scope_id"></a> [scope\_id](#input\_scope\_id) | Id of the billing scope.<br/><br/>  Can be a billing account (EA only), billing profile (MCA/MPA) or a MPA customer<br/><br/>  Examples:<br/><br/>  - `/providers/Microsoft.Billing/billingAccounts/000000`- Enterprise Agreement (EA)<br/>  - `/providers/Microsoft.Billing/billingAccounts/00000000-0000-5000-3000-000000000000:00000000-0000-4000-0000-000000000000_2019-05-31` - Microsoft Customer Agreement (MCA)<br/>  - `/providers/Microsoft.Billing/billingAccounts/00000000-0000-5000-3000-000000000000:00000000-0000-4000-0000-000000000000_2018-09-30` - Microsoft Partner Agreement (MPA)<br/>  - `/providers/Microsoft.Billing/billingAccounts/00000000-0000-5000-3000-000000000000:00000000-0000-4000-0000-000000000000_2019-05-31/billingProfiles/0000-0000-000-000` - MCA Billing profile<br/>  - `/providers/Microsoft.Billing/billingAccounts/00000000-0000-5000-3000-000000000000:00000000-0000-4000-0000-000000000000_2018-09-30/billingProfiles/00000000-0000-4000-0000-000000000000` - MPA Billing profile<br/>  - `/providers/Microsoft.Billing/billingAccounts/00000000-0000-5000-3000-000000000000:00000000-0000-4000-0000-000000000000_2018-09-30/customers/00000000-0000-4000-0000-000000000000` - CSP Customer (attached to a MPA) | `string` | n/a | yes |
+| <a name="input_resource_types"></a> [resource\_types](#input\_resource\_types) | Override the AzAPI `<provider>/<resource>@<api-version>` strings used by this module. Each key defaults to a tested value; supply only the keys you want to override. Useful when targeting a sovereign cloud with older API versions, or when opting into a newer preview API.<br/><br/>  - `ea_billing_account`  - The billing account settings - only if var.scope\_id is a EA billing account.<br/>  - `billing_profile`     - The billing profile policies - only if var.scope\_id is a MCA or MPA billing profile.<br/>  - `mpa_customer`        - The customer policies - only if var.scope\_id is a MPA customer.<br/>  - `tag_inheritance`     - The cost management settings used to managed tag inheritance. | <pre>object({<br/>    ea_billing_account = optional(string, "Microsoft.Billing/billingAccounts/policies@2024-04-01")<br/>    billing_profile    = optional(string, "Microsoft.Billing/billingAccounts/billingProfiles/policies@2024-04-01")<br/>    mpa_customer       = optional(string, "Microsoft.Billing/billingAccounts/customers/policies@2024-04-01")<br/>    tag_inheritance    = optional(string, "Microsoft.CostManagement/settings@2025-03-01")<br/>  })</pre> | `{}` | no |
+| <a name="input_scope_id"></a> [scope\_id](#input\_scope\_id) | Id of the billing scope.<br/><br/>  Can be a billing account (EA only), billing profile (MCA/MPA) or a MPA customer.<br/><br/>  Examples:<br/><br/>  - `/providers/Microsoft.Billing/billingAccounts/000000`- Enterprise Agreement (EA)<br/>  - `/providers/Microsoft.Billing/billingAccounts/00000000-0000-5000-3000-000000000000:00000000-0000-4000-0000-000000000000_2019-05-31` - Microsoft Customer Agreement (MCA)<br/>  - `/providers/Microsoft.Billing/billingAccounts/00000000-0000-5000-3000-000000000000:00000000-0000-4000-0000-000000000000_2018-09-30` - Microsoft Partner Agreement (MPA)<br/>  - `/providers/Microsoft.Billing/billingAccounts/00000000-0000-5000-3000-000000000000:00000000-0000-4000-0000-000000000000_2019-05-31/billingProfiles/0000-0000-000-000` - MCA Billing profile<br/>  - `/providers/Microsoft.Billing/billingAccounts/00000000-0000-5000-3000-000000000000:00000000-0000-4000-0000-000000000000_2018-09-30/billingProfiles/00000000-0000-4000-0000-000000000000` - MPA Billing profile<br/>  - `/providers/Microsoft.Billing/billingAccounts/00000000-0000-5000-3000-000000000000:00000000-0000-4000-0000-000000000000_2018-09-30/customers/00000000-0000-4000-0000-000000000000` - CSP Customer (attached to a MPA) | `string` | n/a | yes |
 | <a name="input_tag_inheritance_scope"></a> [tag\_inheritance\_scope](#input\_tag\_inheritance\_scope) | Describe the mecanism when a resource tag has the same key has an inherited tag.<br/><br/>  If set, you must enable tag inheritance using `var.enable_marketplace`.<br/><br/>  Examples:<br/>  - `keep_resource_tag` - Use resource tag instead of inherited tag<br/>  - `use_inherited_tag` - Apply subscription or resource group tag | `string` | `null` | no |
 
 ## Outputs

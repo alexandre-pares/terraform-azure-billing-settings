@@ -7,7 +7,7 @@ import {
 
   identity = {
     id   = "${var.scope_id}/providers/Microsoft.CostManagement/settings/taginheritance"
-    type = "Microsoft.CostManagement/settings@2025-03-01"
+    type = var.resource_types["tag_inheritance"]
   }
   to = azapi_resource.tag_inheritance[0]
 }

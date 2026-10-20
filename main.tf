@@ -1,5 +1,5 @@
 data "azapi_resource" "old_policies_settings" {
-  type = local.policy_endpoint_by_scope_type[local.scope_type]
+  type = var.resource_types[local.scope_type]
   name = "default"
 
   parent_id = var.scope_id
@@ -8,7 +8,7 @@ data "azapi_resource" "old_policies_settings" {
 }
 
 resource "azapi_update_resource" "new_policies_settings" {
-  type = local.policy_endpoint_by_scope_type[local.scope_type]
+  type = var.resource_types[local.scope_type]
   name = "default"
 
   parent_id = var.scope_id
@@ -26,7 +26,7 @@ resource "azapi_update_resource" "new_policies_settings" {
 # Microsoft.CostManagement settings
 # Learn more: https://learn.microsoft.com/en-us/azure/templates/microsoft.costmanagement/settings
 data "azapi_resource" "old_tag_inheritance" {
-  type = "Microsoft.CostManagement/Settings@2025-03-01"
+  type = var.resource_types["tag_inheritance"]
   name = "taginheritance"
 
   parent_id = var.scope_id
@@ -42,7 +42,7 @@ data "azapi_resource" "old_tag_inheritance" {
 resource "azapi_resource" "tag_inheritance" {
   count = var.enable_tag_inheritance != null && var.enable_tag_inheritance ? 1 : 0
 
-  type = "Microsoft.CostManagement/settings@2025-03-01"
+  type = var.resource_types["tag_inheritance"]
   name = "taginheritance"
 
   parent_id = var.scope_id

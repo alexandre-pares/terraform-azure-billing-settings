@@ -3,18 +3,12 @@ locals {
   is_billing_profile = strcontains(var.scope_id, "/billingProfiles/") && !local.is_mpa_customer
   is_mpa_customer    = strcontains(var.scope_id, "/customers/")
 
-  scope_type = local.is_ea ? "ea" : local.is_billing_profile ? "billing_profile" : local.is_mpa_customer ? "mpa_customer" : null
-
-  policy_endpoint_by_scope_type = {
-    ea              = "Microsoft.Billing/billingAccounts/policies@2024-04-01"
-    billing_profile = "Microsoft.Billing/billingAccounts/billingProfiles/policies@2024-04-01"
-    mpa_customer    = "Microsoft.Billing/billingAccounts/customers/policies@2024-04-01"
-  }
+  scope_type = local.is_ea ? "ea_billing_account" : local.is_billing_profile ? "billing_profile" : local.is_mpa_customer ? "mpa_customer" : null
 
   common_properties = {
     ea_and_billing_profile = merge(
-      var.enable_marketplace != null && var.marketplace_scope != null && var.enable_marketplace ? {
-        marketplacePurchases = var.enable_marketplace ? var.marketplace_scope == "free" ? "OnlyFreeAllowed" : "AllAllowed" : "NotAllowed"
+      var.enable_marketplace != null ? {
+        marketplacePurchases = !var.enable_marketplace ? "NotAllowed" : var.marketplace_scope == "free_and_paid" ? "AllAllowed" : "OnlyFreeAllowed"
       } : {},
       var.enable_reservation != null ? {
         reservationPurchases = var.enable_reservation ? "Allowed" : "NotAllowed"
@@ -44,7 +38,7 @@ locals {
         enterpriseAgreementPolicies = {
           accountOwnerViewCharges    = var.enable_cost_management ? "Allowed" : "NotAllowed"
           departmentAdminViewCharges = var.enable_cost_management ? "Allowed" : "NotAllowed"
-          authenticationType         = data.azapi_resource.old_policies_settings.output.properties.enterpriseAgreementPolicies.authenticationType
+          authenticationType         = try(data.azapi_resource.old_policies_settings.output.properties.enterpriseAgreementPolicies.authenticationType, null)
         }
       } : {},
       local.common_properties.ea_and_billing_profile
