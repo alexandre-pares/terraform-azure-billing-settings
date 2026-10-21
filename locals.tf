@@ -33,7 +33,7 @@ locals {
     # - enable_saving_plan using savingsPlanPurchases
     #
     # Learn more: https://learn.microsoft.com/en-us/azure/templates/microsoft.billing/billingaccounts/policies
-    ea = merge(
+    ea_billing_account = merge(
       var.enable_cost_management != null ? {
         enterpriseAgreementPolicies = {
           accountOwnerViewCharges    = var.enable_cost_management ? "Allowed" : "NotAllowed"
